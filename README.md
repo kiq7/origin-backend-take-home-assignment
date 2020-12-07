@@ -1,3 +1,93 @@
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+* Node v12+ and npm
+
+## Running project
+
+### Start server
+
+Install the dependencies
+
+```
+npm run start:dev
+```
+
+and start the server
+
+```
+npm run start
+```
+
+or with hot reload
+
+```
+npm run start:dev
+```
+
+### Running the tests
+
+Run the following command to run all tests (unit and integration tests)
+
+```
+npm run test
+```
+
+## Technical decisions
+
+I chose to work with Nodejs & Typescript because of the ease I have with these technologies.
+I'm using a framework called Nestjs, where there are many good things to stand out, and here are some of them:
+Modules, Dependency Injection, Pipes, Exception Filters, and a lot of other things that really help in development.
+
+### Code structure and architecture
+
+The project was created based on the concepts of Clean Architecture, where we have the following layers:
+
+### Domain Layer
+In this layer, we define business rules related to entities with a specific problem, in this case, risk calculation for insurance lines.
+This is the most important and isolated layer that we should have in our project, regardless of details of implementations or communications
+with low-level layers (like an infrastructure layer, for example)
+
+### Usecases
+This layer has a great relationship with the domain layer, so much so that in some clean architecture implementations,
+the use cases are within the domain itself.
+
+Use cases represent the current behavior of our application, which means, communicating with entities in the domain layer
+and orchestrate according to the need for business. Like the domain layer, this layer should not depend on the implementations
+of low-level layers. For example, if we need to save user data in a database, there must be an abstraction
+for this database (repositories) to be called here, and this implementation, in fact, must be in the infrastructure layer.
+
+### Presentation
+This layer holds all the entry points of our application, such as HTTP Server, the CLI, websockets, graphic user interfaces (in case of desktop applications), and so on.
+It should not have any knowledge about business rules, use cases, persistence technologies, and not even about other kinds of logic! It should only receive user input (like URL parameters), pass it on to the use case and finally return a response to the user.
+
+There are many other details about Clean Architecture, but these are the main points to highlight for the purpose of this
+project.
+
+### How to implement a new insurance line
+
+Based on the decisions I mentioned above, every business rule is focused on the domain
+application and these rules are extensible.
+To create a new insurance line, just implement an abstract class and add
+in the case of use this new class to be processed.
+
+
+## Tests
+### Unit Tests
+
+For unit tests, I focused more on domain entities and use cases, as they are the most important part of the application.
+
+### Integration Tests
+
+I wrote integration tests focused on the rules that determine the risk score for each insurance line.
+
+## Comments
+I really enjoyed taking this test. The challenge is pretty cool that reflects several problems that we solved day by day.
+I hope you like and any feedback will be welcome.
+
 # Origin Backend Take-Home Assignment
 Origin offers its users an insurance package personalized to their specific needs without requiring the user to understand anything about insurance. This allows Origin to act as their *de facto* insurance advisor.
 
@@ -43,10 +133,10 @@ First, it calculates the *base score* by summing the answers from the risk quest
 1. If the user doesn’t have income, vehicles or houses, she is ineligible for disability, auto, and home insurance, respectively.
 2. If the user is over 60 years old, she is ineligible for disability and life insurance.
 3. If the user is under 30 years old, deduct 2 risk points from all lines of insurance. If she is between 30 and 40 years old, deduct 1.
-4. If her income is above $200k, deduct 1 risk point from all lines of insurance. 
-5. If the user's house is mortgaged, add 1 risk point to her home score and add 1 risk point to her disability score. 
-6. If the user has dependents, add 1 risk point to both the disability and life scores. 
-7. If the user is married, add 1 risk point to the life score and remove 1 risk point from disability. 
+4. If her income is above $200k, deduct 1 risk point from all lines of insurance.
+5. If the user's house is mortgaged, add 1 risk point to her home score and add 1 risk point to her disability score.
+6. If the user has dependents, add 1 risk point to both the disability and life scores.
+7. If the user is married, add 1 risk point to the life score and remove 1 risk point from disability.
 8. If the user's vehicle was produced in the last 5 years, add 1 risk point to that vehicle’s score.
 
 This algorithm results in a final score for each line of insurance, which should be processed using the following ranges:
@@ -78,11 +168,9 @@ Be aware that Origin will mainly take into consideration the following evaluatio
 
 Other important notes:
 * Develop a extensible recommendation engine
-* Add to the README file: (1) instructions to run the code; (2) what were the main technical decisions you made; (3) relevant comments about your project 
+* Add to the README file: (1) instructions to run the code; (2) what were the main technical decisions you made; (3) relevant comments about your project
 * You must use English in your code and also in your docs
 
 This assignment should be doable in less than one day. We expect you to learn fast, **communicate with us**, and make decisions regarding its implementation & scope to achieve the expected results on time.
 
-It is not necessary to build the screens a user would interact with, however, as the API is intended to power a user-facing application, we expect the implementation to be as close as possible to what would be necessary in real-life. Consider another developer would get your project/repository to evolve and implement new features from exactly where you stopped. 
-
-
+It is not necessary to build the screens a user would interact with, however, as the API is intended to power a user-facing application, we expect the implementation to be as close as possible to what would be necessary in real-life. Consider another developer would get your project/repository to evolve and implement new features from exactly where you stopped.
