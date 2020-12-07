@@ -76,6 +76,7 @@ in the case of use this new class to be processed.
 
 
 ## Tests
+
 ### Unit Tests
 
 For unit tests, I focused more on domain entities and use cases, as they are the most important part of the application.
@@ -83,6 +84,8 @@ For unit tests, I focused more on domain entities and use cases, as they are the
 ### Integration Tests
 
 I wrote integration tests focused on the rules that determine the risk score for each insurance line.
+
+![test-suite](https://i.imgur.com/R8yE0tO.png)
 
 ## Comments
 I really enjoyed taking this test. The challenge is pretty cool that reflects several problems that we solved day by day.
