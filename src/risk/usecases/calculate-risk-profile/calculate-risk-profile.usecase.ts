@@ -9,6 +9,7 @@ import { HouseFactory } from 'src/risk/domain/entities/factories/house.factory';
 import { RiskProfileFactory } from 'src/risk/domain/entities/factories/risk-profile.factory';
 import { UserFactory } from 'src/risk/domain/entities/factories/user.factory';
 import { VehicleFactory } from 'src/risk/domain/entities/factories/vehicle.factory';
+import { RentersInsuranceLine } from 'src/risk/domain/entities/insurance-lines/renters-insurance-line.entity';
 
 @Injectable()
 export class CalculateRiskProfileUseCase {
@@ -39,6 +40,7 @@ export class CalculateRiskProfileUseCase {
       disability: DisabilityInsuranceLine,
       home: HomeInsuranceLine,
       life: LifeInsuranceLine,
+      renters: RentersInsuranceLine,
     };
 
     const riskProfile = this.riskProfileFactory.create({

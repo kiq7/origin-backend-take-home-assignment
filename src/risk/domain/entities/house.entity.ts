@@ -8,4 +8,5 @@ export class House {
   }
 
   public isMortgaged = () => this.status === HouseOwnershipStatusEnum.MORTGAGED;
+  public isRented = () => this.status === HouseOwnershipStatusEnum.RENTED;
 }
