@@ -13,4 +13,16 @@ describe('risk :: domain :: house', () => {
       expect(house.isMortgaged()).toBe(false);
     });
   });
+
+  describe('validate if house is rented', () => {
+    it('returns true if is rented', () => {
+      const house = new House(HouseOwnershipStatusEnum.RENTED);
+      expect(house.isRented()).toBe(true);
+    });
+
+    it('returns false if is not rented', () => {
+      const house = new House(HouseOwnershipStatusEnum.MORTGAGED);
+      expect(house.isRented()).toBe(false);
+    });
+  });
 });

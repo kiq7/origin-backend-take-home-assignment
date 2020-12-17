@@ -284,6 +284,51 @@ describe('integration :: calculate risk profile feature', () => {
             expect(status).toBe(200);
             expect(body.disability).toEqual('responsible');
             expect(body.home).toEqual('responsible');
+            expect(body.renters).toEqual('ineligible');
+          });
+        });
+
+        describe('when house is rented', () => {
+          beforeEach(() => {
+            requestBody.house = {
+              ownership_status: 'rented',
+            };
+          });
+
+          it('home should be ineligible', async () => {
+            const { body, status } = await postRiskProfile(requestBody);
+
+            expect(status).toBe(200);
+            expect(body.home).toEqual('ineligible');
+          });
+
+          it('renters should be eligible', async () => {
+            const { body, status } = await postRiskProfile(requestBody);
+
+            expect(status).toBe(200);
+            expect(body.renters).not.toBe('ineligible');
+          });
+        });
+
+        describe('when house is owned', () => {
+          beforeEach(() => {
+            requestBody.house = {
+              ownership_status: 'owned',
+            };
+          });
+
+          it('home should be eligible', async () => {
+            const { body, status } = await postRiskProfile(requestBody);
+
+            expect(status).toBe(200);
+            expect(body.home).not.toBe('ineligible');
+          });
+
+          it('renters should be ineligible', async () => {
+            const { body, status } = await postRiskProfile(requestBody);
+
+            expect(status).toBe(200);
+            expect(body.renters).toBe('ineligible');
           });
         });
 

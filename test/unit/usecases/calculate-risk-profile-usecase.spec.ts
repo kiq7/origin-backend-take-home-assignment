@@ -6,6 +6,7 @@ import { AutoInsuranceLine } from 'src/risk/domain/entities/insurance-lines/auto
 import { DisabilityInsuranceLine } from 'src/risk/domain/entities/insurance-lines/disability-insurance-line.entity';
 import { HomeInsuranceLine } from 'src/risk/domain/entities/insurance-lines/home-insurance-line.entity';
 import { LifeInsuranceLine } from 'src/risk/domain/entities/insurance-lines/life-insurance-line.entity';
+import { RentersInsuranceLine } from 'src/risk/domain/entities/insurance-lines/renters-insurance-line.entity';
 import { HouseOwnershipStatusEnum } from 'src/risk/domain/enums/house-ownership-status.enum';
 import { MaritalStatusEnum } from 'src/risk/domain/enums/marital-status.enum';
 import { CalculateRiskInput } from 'src/risk/usecases/calculate-risk-profile/calculate-risk-profile.input';
@@ -123,6 +124,7 @@ describe('risk :: usecases :: calculate risk profile usecase', () => {
         disability: DisabilityInsuranceLine,
         home: HomeInsuranceLine,
         life: LifeInsuranceLine,
+        renters: RentersInsuranceLine,
       };
 
       expect(riskProfileFactory.create).toHaveBeenCalledWith({

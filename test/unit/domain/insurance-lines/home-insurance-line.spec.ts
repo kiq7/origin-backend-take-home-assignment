@@ -19,6 +19,15 @@ describe('risk :: domain :: home insurance line', () => {
 
       expect(plan).toBe(InsurancePlansEnum.INELIGIBLE);
     });
+
+    it(`returns ineligible if user has a rented house`, () => {
+      const user = makeFakeUser({
+        house: new House(HouseOwnershipStatusEnum.RENTED),
+      });
+      const plan = makeHomeInsuranceLine(user).process();
+
+      expect(plan).toBe(InsurancePlansEnum.INELIGIBLE);
+    });
   });
 
   describe('verify calls for super class on process method', () => {
