@@ -3,6 +3,7 @@ import { RiskProfile } from 'src/risk/domain/entities/risk-profile.entity';
 import { User } from 'src/risk/domain/entities/user.entity';
 import { InsurancePlansEnum } from 'src/risk/domain/enums/insurance-plans.enum';
 import { MaritalStatusEnum } from 'src/risk/domain/enums/marital-status.enum';
+import { makeFakeUser } from 'test/unit/utils/make-fake-user';
 
 class TestInsuranceLine extends InsuranceLine {
   constructor(user: User, baseScore = 0) {
@@ -10,7 +11,27 @@ class TestInsuranceLine extends InsuranceLine {
   }
 
   process(): InsurancePlansEnum {
-    return InsurancePlansEnum.INELIGIBLE;
+    return InsurancePlansEnum.RESPONSIBLE;
+  }
+}
+
+class EconomicInsuranceLine extends InsuranceLine {
+  constructor(user: User, baseScore = 0) {
+    super(user, baseScore);
+  }
+
+  process(): InsurancePlansEnum {
+    return InsurancePlansEnum.ECONOMIC;
+  }
+}
+
+class RegularInsuranceLine extends InsuranceLine {
+  constructor(user: User, baseScore = 0) {
+    super(user, baseScore);
+  }
+
+  process(): InsurancePlansEnum {
+    return InsurancePlansEnum.REGULAR;
   }
 }
 
@@ -65,7 +86,59 @@ describe('risk :: domain :: risk profile', () => {
       const insuranceLines = riskProfile.getInsuranceLines();
 
       expect(insuranceLines).toMatchObject({
-        test: InsurancePlansEnum.INELIGIBLE,
+        test: InsurancePlansEnum.RESPONSIBLE,
+      });
+    });
+
+    describe('set ineligible plan based on processed insurance lines', () => {
+      describe('when exists processed insurance lines for provided plan', () => {
+        it('shouldnt set insurance line as ineligible', () => {
+          const riskProfile = new RiskProfile({
+            insuranceLines: {
+              test1: TestInsuranceLine,
+              test2: EconomicInsuranceLine,
+              test3: RegularInsuranceLine,
+            },
+            user: makeFakeUser(),
+            riskQuestions: [1, 0, 1],
+          });
+
+          riskProfile.setIneligibleBasedOnExistingInsurancePlan(
+            'test3',
+            InsurancePlansEnum.ECONOMIC,
+          );
+
+          expect(riskProfile.getInsuranceLines()).toMatchObject({
+            test1: 'responsible',
+            test2: 'economic',
+            test3: 'regular',
+          });
+        });
+      });
+
+      describe('when doesnt exists processed insurance lines for provided plan', () => {
+        it('should set insurance line as ineligible', () => {
+          const riskProfile = new RiskProfile({
+            insuranceLines: {
+              test1: TestInsuranceLine,
+              test2: TestInsuranceLine,
+              test3: RegularInsuranceLine,
+            },
+            user: makeFakeUser(),
+            riskQuestions: [1, 0, 1],
+          });
+
+          riskProfile.setIneligibleBasedOnExistingInsurancePlan(
+            'test3',
+            InsurancePlansEnum.ECONOMIC,
+          );
+
+          expect(riskProfile.getInsuranceLines()).toMatchObject({
+            test1: 'responsible',
+            test2: 'responsible',
+            test3: 'ineligible',
+          });
+        });
       });
     });
   });

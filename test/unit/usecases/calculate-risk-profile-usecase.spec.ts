@@ -7,12 +7,16 @@ import { DisabilityInsuranceLine } from 'src/risk/domain/entities/insurance-line
 import { HomeInsuranceLine } from 'src/risk/domain/entities/insurance-lines/home-insurance-line.entity';
 import { LifeInsuranceLine } from 'src/risk/domain/entities/insurance-lines/life-insurance-line.entity';
 import { RentersInsuranceLine } from 'src/risk/domain/entities/insurance-lines/renters-insurance-line.entity';
+import { UmbrellaInsuranceLine } from 'src/risk/domain/entities/insurance-lines/umbrella-insurance-line.entity';
 import { HouseOwnershipStatusEnum } from 'src/risk/domain/enums/house-ownership-status.enum';
+import { InsurancePlansEnum } from 'src/risk/domain/enums/insurance-plans.enum';
 import { MaritalStatusEnum } from 'src/risk/domain/enums/marital-status.enum';
 import { CalculateRiskInput } from 'src/risk/usecases/calculate-risk-profile/calculate-risk-profile.input';
 import { CalculateRiskProfileUseCase } from 'src/risk/usecases/calculate-risk-profile/calculate-risk-profile.usecase';
 
 describe('risk :: usecases :: calculate risk profile usecase', () => {
+  const setIneligibleBasedOnExistingInsurancePlanFn = jest.fn();
+
   const userFactory: UserFactory = {
     create: jest.fn().mockReturnValue({
       setHouse: jest.fn(),
@@ -24,6 +28,7 @@ describe('risk :: usecases :: calculate risk profile usecase', () => {
   const riskProfileFactory: RiskProfileFactory = {
     create: jest.fn().mockReturnValue({
       getInsuranceLines: jest.fn(),
+      setIneligibleBasedOnExistingInsurancePlan: setIneligibleBasedOnExistingInsurancePlanFn,
     }),
   };
 
@@ -125,6 +130,7 @@ describe('risk :: usecases :: calculate risk profile usecase', () => {
         home: HomeInsuranceLine,
         life: LifeInsuranceLine,
         renters: RentersInsuranceLine,
+        umbrella: UmbrellaInsuranceLine,
       };
 
       expect(riskProfileFactory.create).toHaveBeenCalledWith({
@@ -135,6 +141,15 @@ describe('risk :: usecases :: calculate risk profile usecase', () => {
         riskQuestions: [1, 0, 1],
         insuranceLines,
       });
+    });
+
+    it('should call setIneligibleBasedOnExistingInsurancePlan with correct params', () => {
+      executeUseCase({});
+
+      expect(setIneligibleBasedOnExistingInsurancePlanFn).toBeCalledWith(
+        'umbrella',
+        InsurancePlansEnum.ECONOMIC,
+      );
     });
   });
 });

@@ -37,6 +37,31 @@ export class RiskProfile {
     }
   };
 
+  public setIneligibleBasedOnExistingInsurancePlan = (
+    insuranceName: string,
+    plan: InsurancePlansEnum,
+  ) => {
+    const insuranceNames = Object.keys(this.processedInsuranceLines).filter(
+      (name) => name !== insuranceName,
+    );
+
+    const existsPlan = this.existsInsurancesWithPlan(insuranceNames, plan);
+
+    if (!existsPlan) {
+      this.processedInsuranceLines[insuranceName] =
+        InsurancePlansEnum.INELIGIBLE;
+    }
+  };
+
+  private existsInsurancesWithPlan = (
+    insurances: string[],
+    plan: InsurancePlansEnum,
+  ): boolean => {
+    return insurances.some(
+      (insurance) => this.processedInsuranceLines[insurance] === plan,
+    );
+  };
+
   public getInsuranceLines = () => this.processedInsuranceLines;
 
   public get riskQuestionsScore() {

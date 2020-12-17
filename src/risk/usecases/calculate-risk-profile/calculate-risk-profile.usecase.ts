@@ -10,6 +10,7 @@ import { RiskProfileFactory } from 'src/risk/domain/entities/factories/risk-prof
 import { UserFactory } from 'src/risk/domain/entities/factories/user.factory';
 import { VehicleFactory } from 'src/risk/domain/entities/factories/vehicle.factory';
 import { RentersInsuranceLine } from 'src/risk/domain/entities/insurance-lines/renters-insurance-line.entity';
+import { UmbrellaInsuranceLine } from 'src/risk/domain/entities/insurance-lines/umbrella-insurance-line.entity';
 
 @Injectable()
 export class CalculateRiskProfileUseCase {
@@ -41,6 +42,7 @@ export class CalculateRiskProfileUseCase {
       home: HomeInsuranceLine,
       life: LifeInsuranceLine,
       renters: RentersInsuranceLine,
+      umbrella: UmbrellaInsuranceLine,
     };
 
     const riskProfile = this.riskProfileFactory.create({
@@ -48,6 +50,11 @@ export class CalculateRiskProfileUseCase {
       riskQuestions,
       insuranceLines,
     });
+
+    riskProfile.setIneligibleBasedOnExistingInsurancePlan(
+      'umbrella',
+      InsurancePlansEnum.ECONOMIC,
+    );
 
     return riskProfile.getInsuranceLines();
   }

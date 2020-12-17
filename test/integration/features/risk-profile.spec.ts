@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { request } from 'http';
 import { InvalidUsecaseInputFilter } from 'src/risk/presentation/http/exception-filters/invalid-use-case-input.filter';
 import { UserProfileRequestModel } from 'src/risk/presentation/http/requests/user-profile.request';
 import { RiskModule } from 'src/risk/risk.module';
@@ -38,11 +37,13 @@ describe('integration :: calculate risk profile feature', () => {
         });
 
         expect(status).toBe(200);
-        expect(body).toMatchObject({
+        expect(body).toStrictEqual({
           auto: expect.any(String),
           disability: expect.any(String),
           home: expect.any(String),
           life: expect.any(String),
+          renters: expect.any(String),
+          umbrella: expect.any(String),
         });
       });
     });
@@ -165,7 +166,23 @@ describe('integration :: calculate risk profile feature', () => {
           });
         });
 
-        it('all insurance lines should be regular for score between 1 and 2', async () => {
+        it('umbrella should be eligible', async () => {
+          requestBody.risk_questions = [0, 0, 0];
+
+          const { body, status } = await postRiskProfile(requestBody);
+
+          expect(status).toBe(200);
+          expect(body).toMatchObject({
+            auto: 'economic',
+            disability: 'economic',
+            home: 'economic',
+            life: 'economic',
+          });
+
+          expect(body.umbrella).not.toBe('ineligible');
+        });
+
+        it('auto, disability, home, life insurance lines should be regular for score between 1 and 2', async () => {
           requestBody.risk_questions = [1, 1, 0];
 
           const { body, status } = await postRiskProfile(requestBody);
@@ -222,7 +239,7 @@ describe('integration :: calculate risk profile feature', () => {
             requestBody.age = 29;
           });
 
-          it('all insurance lines should be regular', async () => {
+          it('auto, disability, home and life insurance lines should be regular', async () => {
             const { body, status } = await postRiskProfile(requestBody);
 
             expect(status).toBe(200);
@@ -240,7 +257,7 @@ describe('integration :: calculate risk profile feature', () => {
             requestBody.age = 35;
           });
 
-          it('all insurance lines should be regular', async () => {
+          it('auto, disability, home and life lines should be regular', async () => {
             const { body, status } = await postRiskProfile(requestBody);
 
             expect(status).toBe(200);
@@ -251,6 +268,16 @@ describe('integration :: calculate risk profile feature', () => {
               life: 'regular',
             });
           });
+
+          it('umbrella and renters lines should be ineligible', async () => {
+            const { body, status } = await postRiskProfile(requestBody);
+
+            expect(status).toBe(200);
+            expect(body).toMatchObject({
+              umbrella: 'ineligible',
+              renters: 'ineligible',
+            });
+          });
         });
 
         describe('when income is above than $200k', () => {
@@ -258,7 +285,7 @@ describe('integration :: calculate risk profile feature', () => {
             requestBody.income = 200001;
           });
 
-          it('all insurance lines should be regular', async () => {
+          it('auto, disability, home and life insurance lines should be regular', async () => {
             const { body, status } = await postRiskProfile(requestBody);
 
             expect(status).toBe(200);
